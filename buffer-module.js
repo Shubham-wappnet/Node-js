@@ -24,7 +24,7 @@ let buf3=Buffer.from("Lad");
 console.log(Buffer.compare(buf2,buf3));  //compare buf2 with buf3
 console.log(Buffer.compare(buf3,buf2));  //compare buf3 with buf2
 
-console.log(buf2.equals(buf3)); 
+console.log(buf2.equals(buf1)); 
 //let buf4=buf2.subarray(2,8);
 let buf4=buf2.subarray(-2,8);
 //let buf4=buf2.subarray(-2,-8);
