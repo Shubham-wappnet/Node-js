@@ -1,5 +1,5 @@
-module.exports=(seq1,DataTypes)=>{
-    const user2=seq1.define("users",{
+module.exports=(sequelize,DataTypes)=>{
+    const user2=sequelize.define("Users",{
         name: {
             type: DataTypes.STRING,
             allowNull: false ,
@@ -14,7 +14,7 @@ module.exports=(seq1,DataTypes)=>{
         }
     },{
         //tableName:"persons",  create new table 'persons'
-        timestamps:false
+        timestamps:false     // if we are not using this it shows createdAt & updateAt in table
     });
     return user2;
 };
