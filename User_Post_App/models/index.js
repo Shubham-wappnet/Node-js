@@ -7,17 +7,9 @@ const sequelize = new Sequelize(
   process.env.PASSWORD,
   {
       host: process.env.HOST,
-      dialect: process.env.dialect,
+      dialect: 'mysql',
   
-      pool: {
-          max: process.env.pool.max,
-          min: process.env.pool.min,
-          acquire: process.env.pool.acquire,
-          idle: process.env.pool.idle
-
-      }
-  }
-)
+  })
 
 sequelize.authenticate()
 .then(()=>{
@@ -36,7 +28,7 @@ sequelize.authenticate()
 // const basename = path.basename(__filename);
 // const env = process.env.NODE_ENV || 'development';
 // const config = require(__dirname + '/../config/config.json')[env];
-// const db = {};
+   const db = {};
 
 // // let sequelize;
 // // if (config.use_env_variable) {
@@ -71,7 +63,10 @@ sequelize.authenticate()
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.products=require('./postModel.js')(sequelize,DataTypes);
-db.reviews=require('./userModel.js')(sequelize,DataTypes);
+db.user=require('./userModel.js')(sequelize,DataTypes);
+db.post=require('./postModel.js')(sequelize,DataTypes);
+
+db.user.hasOne(db.post)
+db.post.belongsTo(db.user)
 
 module.exports = db;

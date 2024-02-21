@@ -1,23 +1,25 @@
 module.exports=(sequelize,DataTypes)=>{
     const Post=sequelize.define("post",{
        id:{
-        type:DataTypes.number,
-        allowNull:false
+        type:DataTypes.INTEGER,
+        allowNull:false,
+        primaryKey:true
        },
         title:{
-            type:DataTypes.string,
+            type:DataTypes.STRING,
             allowNull:false
         },
         description:{
-            type:DataTypes.string,
+            type:DataTypes.STRING,
             allowNull:true
         },
         desg:{
-            type:DataTypes.number,
+            type:DataTypes.STRING,
             allowNull:false
         }
     },{
-        timestamps:false
+        timestamps:false,
+        paranoid:true
     })
     return Post;
 }

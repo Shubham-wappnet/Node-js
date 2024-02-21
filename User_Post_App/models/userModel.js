@@ -1,28 +1,36 @@
-module.exports=(sequelize,DataTypes)=>{
-    const User=sequelize.define("user",{
-        id:{
-            type:DataTypes.number,
-            allowNull:false
+module.exports = (sequelize, DataTypes) => {
+    const User = sequelize.define("User", {
+        id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            primaryKey: true,
+            autoIncrement: true 
         },
-        email:{
-            type:DataTypes.string,
-            allowNull:false
+        email: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                isEmail: true
+            }
         },
-        name:{
-            type:DataTypes.string,
-            allowNull:false
+        name: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
-        phone:{
-            type:DataTypes.number,
-            allowNull:false
+        phone: {
+            type: DataTypes.STRING, 
+            allowNull: true,
+            validate: {
+                is: /^\d+$/ 
+            }
         },
-        status:{
-            type: DataTypes.ENUM('active', 'inactive', 'pending'), 
-            allowNull: false,
-            defaultValue: 'pending'
+        status: {
+            type: DataTypes.ENUM('active', 'deleted'),
+            allowNull: true,
+            defaultValue: 'active'
         }
-    },{
-        timestamps:false
-    })
+    }, {
+        timestamps: false
+    });
     return User;
-}
+};
