@@ -1,36 +1,41 @@
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define("User", {
-        id: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            primaryKey: true,
-            autoIncrement: true 
-        },
         email: {
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
+            unique: true,
             validate: {
-                isEmail: true
+                isEmail: {
+                    msg: 'Invalid email format'
+                }
             }
         },
         name: {
-            type: DataTypes.STRING,
-            allowNull: true
+            type: DataTypes.STRING(50),
+            allowNull: false
         },
         phone: {
-            type: DataTypes.STRING, 
-            allowNull: true,
+            type: DataTypes.STRING,
+            allowNull: false,
             validate: {
-                is: /^\d+$/ 
+                isNumeric: {
+                    msg: 'Phone must be numeric'
+                }
             }
         },
         status: {
-            type: DataTypes.ENUM('active', 'deleted'),
-            allowNull: true,
-            defaultValue: 'active'
+            type: DataTypes.ENUM('Active', 'Deleted'),
+            defaultValue: 'Active',
+            allowNull: false,
+            // validate: {
+            //     isIn: {
+            //         args: [['Active', 'Deleted']],
+            //         msg: "Must be Active or Deleted"
+            //     }
+            // }
         }
     }, {
-        timestamps: false
+        timestamps: true,
     });
     return User;
 };

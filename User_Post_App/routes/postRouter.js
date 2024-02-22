@@ -1,10 +1,13 @@
 const postController=require('../controllers/postController.js')
-const router1=require('express').Router()
+const router=require('express').Router()
 
-router1.post('/addPost',postController.addPost)
-router1.get('/getPost',postController.getAllPost)
-router1.get('/:id',postController.getOnePost)
-router1.get('/:id',postController.updatePost)
-router1.get('/:id',postController.deletePost)
+router.post('/addPost',postController.addPost)
+router.get('/getPost',postController.getAllPost)
+router.get('/:id',postController.getOnePost)
+router.put('/:id',postController.updatePost)
+router.get('/get/:id', postController.getPostWithUser)
 
-module.exports=router1
+router.patch('/softDelete/:id', postController.postSoftDelete);
+router.delete('/hardDelete/:id', postController.postHardDelete);
+
+module.exports=router

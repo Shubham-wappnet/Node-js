@@ -8,6 +8,8 @@ router.get('/getUser',userController.getAllUser)
 router.get('/searchData',userController.searchData)
 router.get('/:id',userController.getOneUser)
 router.put('/:id', userController.updateUser)
-router.delete('/:id', userController.deleteUser)
+router.get('/get/:id', userController.viewUserPostById);
 
+router.patch('/softDelete/:id', userController.userSoftDelete);
+router.delete('/hardDelete/:id', userController.userHardDelete);
 module.exports=router

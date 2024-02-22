@@ -11,11 +11,11 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
-const router=require('./routes/userRouter.js')
-app.use('/api/users',router)
+const router1=require('./routes/userRouter.js')
+app.use('/api/users',router1)
 
-const router1=require('./routes/postRouter.js')
-app.use('/api/posts',router1)
+const router2=require('./routes/postRouter.js')
+app.use('/api/posts',router2)
 
 
 app.get('/', (req, res) => {

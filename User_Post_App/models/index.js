@@ -66,7 +66,7 @@ db.Sequelize = Sequelize;
 db.user=require('./userModel.js')(sequelize,DataTypes);
 db.post=require('./postModel.js')(sequelize,DataTypes);
 
-db.user.hasOne(db.post)
-db.post.belongsTo(db.user)
+ db.user.hasMany(db.post, { as: 'postDetails', foreignKey: 'userId' });
+ db.post.belongsTo(db.user, { as: 'userDetails', foreignKey: 'userId' });
 
 module.exports = db;
