@@ -12,4 +12,5 @@ router.get('/get/:id', userController.viewUserPostById);
 
 router.patch('/softDelete/:id', userController.userSoftDelete);
 router.delete('/hardDelete/:id', userController.userHardDelete);
+
 module.exports=router
