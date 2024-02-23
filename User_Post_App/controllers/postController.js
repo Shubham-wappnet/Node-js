@@ -11,7 +11,8 @@ const addPost = async (req, res) => {
             title: req.body.title,
             description: req.body.description,
             status: req.body.status,
-            userId: req.body.userId
+            userId: req.body.userId,
+            
         }
         const post = await Post.create(newpost);
 
@@ -184,4 +185,42 @@ const postHardDelete = async (req, res) => {
 }
 
 
-module.exports={addPost,getAllPost,getOnePost,updatePost,getPostWithUser,postSoftDelete,postHardDelete}
+// apload files
+
+// const uploadFiles = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const { files } = req;
+//     const filePaths = files.map(file => file.path); // Get file paths
+//     console.log(filePaths)
+//     // Update the Post record with the file paths using Sequelize
+//     await Post.update({ file_paths: filePaths }, { where: { postId: id } });
+
+//     res.status(201).json({ message: 'Files uploaded successfully' });
+//   } catch (error) {
+//     console.error('Error uploading files:', error);
+//     res.status(500).json({ message: 'Internal server error' });
+//   }
+// };
+
+const uploadFiles = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { files } = req;
+      const filePaths = files.map(file => file.path); // Get file paths
+  
+      console.log(filePaths);
+  
+      // Update the Post record with the file paths using Sequelize
+      await Post.update({ file_paths: filePaths.join(',') }, { where: { postId: id } });
+  
+      res.status(201).json({ message: 'Files uploaded successfully' });
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
+
+
+module.exports={addPost,getAllPost,getOnePost,updatePost,getPostWithUser,postSoftDelete,          postHardDelete,uploadFiles}

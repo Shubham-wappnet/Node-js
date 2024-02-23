@@ -38,8 +38,13 @@ module.exports=(sequelize,DataTypes)=>{
                 msg: "Invalid userId"
               }
             }
+          },
+          file_path:{
+            type:DataTypes.STRING,
+            allowNull:false
           }
-        }, {
+        }, 
+        {
           timestamps: true,
     })
     return Post;

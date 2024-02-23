@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
             //         msg: "Must be Active or Deleted"
             //     }
             // }
+        },
+        password:{
+            type:DataTypes.STRING,
+            allowNull:false
         }
     }, {
         timestamps: true,
