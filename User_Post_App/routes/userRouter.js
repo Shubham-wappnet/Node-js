@@ -1,5 +1,6 @@
 const userController=require('../controllers/userController.js')
 const validateRegistration=require('../middleware/validation.js')
+const authenticateJWT=require('../middleware/authMiddleware.js')
 const router=require('express').Router()
 
 
@@ -13,6 +14,7 @@ router.get('/get/:id', userController.viewUserPostById)
 
 router.post('/signup',validateRegistration,userController.signup)
 router.post('/login',userController.login)
+router.patch('/newPassword',authenticateJWT,userController.changePassword)
 
 router.patch('/softDelete/:id', userController.userSoftDelete);
 router.delete('/hardDelete/:id', userController.userHardDelete);

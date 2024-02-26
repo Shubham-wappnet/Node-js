@@ -1,4 +1,4 @@
-const { Sequelize, Op } = require('sequelize')
+const { Sequelize, Op, where } = require('sequelize')
 require('dotenv').config
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
@@ -6,6 +6,7 @@ const db = require('../models')
 const User = db.user;
 const Post = db.post;
 const Joi = require('joi')
+
 
 
 
@@ -246,7 +247,7 @@ const signup = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
-            expiresIn: '5 min' 
+            expiresIn: 300
         });
 
         res.status(201).json({ token });
@@ -273,7 +274,7 @@ const login = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-            expiresIn: '1h'
+            expiresIn: 300
         });
 
         res.json({ token });
@@ -283,7 +284,31 @@ const login = async (req, res) => {
     }
 };
 
+const changePassword=async(req,res)=>{
+      try{
+          const {email,password,newPassword}=req.body;
 
+          const user=await User.findOne({where:{email:email}})
+          if(!user){
+            res.status(401).json({error:"Invalid email or password"})
+          }
+
+          const isPasswordValid=await bcrypt.compare(password,user.password)
+          if(!isPasswordValid){
+            res.status(401).json({error:"Invalid email or password "})
+          }
+
+          // change password after user is autherised
+          const hashedPassword=await bcrypt.hash(newPassword,10) 
+          user.password=hashedPassword
+          await user.save();
+          res.status(200).json({message:"password changed successfully" });
+    }
+      catch(error){
+        console.error('Error in changePassword controller:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+}
 
 module.exports = { addUser, 
     getAllUser, 
@@ -295,5 +320,6 @@ module.exports = { addUser,
     userSoftDelete, 
     userHardDelete, 
     signup, 
-    login 
+    login,
+    changePassword
 }
