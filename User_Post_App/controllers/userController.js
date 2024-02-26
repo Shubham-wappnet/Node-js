@@ -1,35 +1,18 @@
-const {Sequelize,Op}=require('sequelize')
-const jwt=require('jsonwebtoken')
-const bcrypt=require('bcrypt')
-const config=require('../middleware/authMiddleware.js')
-const db=require('../models')
-const User=db.user;
-const Post=db.post;
-//console.log('User:', User);
+const { Sequelize, Op } = require('sequelize')
+require('dotenv').config
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const db = require('../models')
+const User = db.user;
+const Post = db.post;
+const Joi = require('joi')
 
-const Joi=require('joi')
-const statusEnum=['active','deleted'];
-const userSchema=Joi.object({
-    email: Joi.string().email().required(),
-    name: Joi.string().alphanum().min(3).max(30).required(),
-    //password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
-    phone: Joi.string().pattern(new RegExp('^[0-9]{10}$')).required(),
-    status: Joi.string().valid(...statusEnum).required()
-})
-const validateUser = (req, res) => {
-    const { error } = userSchema.validate(req.body);
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
-    }
-    res.status(201).json({ msg: 'User created successfully' });
-  };
-  
-  
+
 
 const addUser = async (req, res) => {
     try {
         let info = {
-            id:req.body.id,
+            id: req.body.id,
             email: req.body.email,
             name: req.body.name,
             phone: req.body.phone,
@@ -112,8 +95,8 @@ const getOneUser = async (req, res) => {
 
 
 //search
-const searchData=async(req,res)=>{   
-    let user=await User.findAll({
+const searchData = async (req, res) => {
+    let user = await User.findAll({
         // id:{
         //     [Op.eq]:102
         // },
@@ -123,11 +106,11 @@ const searchData=async(req,res)=>{
         // id: { 
         //     [Op.is]: null 
         // },
-        order:[
-            ['name','desc']
+        order: [
+            ['name', 'desc']
         ],
-        limit:2
-       // group:'name' 
+        limit: 2
+        // group:'name' 
 
     })
     res.status(200).send(user)
@@ -173,7 +156,7 @@ const viewUserPostById = async (req, res) => {
             include: [{
                 model: Post,
                 as: 'postDetails',
-                attributes: ['postId', 'title', 'description','status']
+                attributes: ['postId', 'title', 'description', 'status']
             }
             ],
             where: { id: id, status: "Active" }
@@ -217,7 +200,7 @@ const userSoftDelete = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
- 
+
 
 // hard delete
 const userHardDelete = async (req, res) => {
@@ -245,76 +228,72 @@ const userHardDelete = async (req, res) => {
 }
 
 // signup
+
 const signup = async (req, res) => {
     try {
-      const { email, password } = req.body;
-  
-      // Check if the email already exists
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({ error: 'email is already used' });
-      }
-      const hashedPassword = await bcrypt.hash(password, 15);
-  
-      // Create a new user record
-      const newUser = new User({ email, password: hashedPassword });
-      await newUser.save();
-  
-      // Generate JWT token
-      const token = jwt.sign({ email: newUser.email }, config.jwtSecret, {
-        expiresIn: '1h' // Token expires in 1 hour
-      });
-  
-      res.status(201).json({ token });
+        const { email, name, phone, status, password } = req.body;
+
+        // Check if the email already exists
+        const existingUser = await User.findOne({ where: { email: email } });
+        if (existingUser) {
+            return res.status(400).json({ error: 'email is already used' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create a new user record
+        const newUser = new User({ email, name, phone, status, password: hashedPassword });
+        await newUser.save();
+
+        // Generate JWT token
+        const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
+            expiresIn: '5 min' 
+        });
+
+        res.status(201).json({ token });
     } catch (error) {
-      console.error('Error in signup controller:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error in signup controller:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  };
+};
 
 //login
 const login = async (req, res) => {
     try {
-      const { email, password } = req.body;
-  
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(401).json({ error: 'Invalid email or password' });
-      }
+        const { email, password } = req.body;
 
-      const isPasswordValid = await bcrypt.compare(password, user.password);  //check password
-      if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Invalid email or password' });
-      }
-  
-      // Generate JWT token
-      const token = jwt.sign({ email: user.email }, config.jwtSecret, {
-        expiresIn: '1h'
-      });
-  
-      res.json({ token });
+        const user = await User.findOne({ where: { email: email } });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);  //check password
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+            expiresIn: '1h'
+        });
+
+        res.json({ token });
     } catch (error) {
-      console.error('Error in login controller:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error in login controller:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  };
+};
 
-//profile
-const profile = async (req, res) => {
-    try {
-      const { user } = req;
-      const userProfile = await User.findById(user._id).select('-password');
-  
-      if (!userProfile) {
-        return res.status(404).json({ error: 'User profile not found' });
-      }
-  
-      // Send user profile in the response
-      res.json(userProfile);
-    } catch (error) {
-      console.error('Error in profile controller:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  };
 
-module.exports={addUser,getAllUser,getOneUser,updateUser,queryData,searchData,viewUserPostById,userSoftDelete,userHardDelete,validateUser,signup,login,profile }
+
+module.exports = { addUser, 
+    getAllUser, 
+    getOneUser, 
+    updateUser,
+    queryData, 
+    searchData, 
+    viewUserPostById, 
+    userSoftDelete, 
+    userHardDelete, 
+    signup, 
+    login 
+}

@@ -1,9 +1,8 @@
-const express = require('express');
-const dotenv = require('dotenv');
-dotenv.config(); 
+const express = require('express'); 
 const cors=require('cors');
 const app = express();
-
+const authenticateJWT=require('./middleware/authMiddleware')
+const validateRegistration=require('./middleware/validation.js')
 const port = process.env.PORT || 3000;
 
 
@@ -16,6 +15,18 @@ app.use('/api/users',router1)
 
 const router2=require('./routes/postRouter.js')
 app.use('/api/posts',router2)
+
+app.get('/protected',authenticateJWT,(req,res)=>{
+  res.json({msg:'protected route',email:req.email})
+});
+
+app.get('/validate',validateRegistration,(req,res)=>{
+    res.json({msg:"user validate successfully"})
+})
+
+// app.post('/upload',upload.array('files',10),(req,res)=>{
+//   res.send("files uploaded ")
+// })
 
 // allowed from 3000
 const corOption={origin:"https://localhost:3000",

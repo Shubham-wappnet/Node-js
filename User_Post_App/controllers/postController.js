@@ -1,35 +1,32 @@
-
 const db=require('../models')
 const Post=db.post
 const User=db.user
 
-
+// addPost
 const addPost = async (req, res) => {
     try {
-        let newpost = {
-            postId: req.body.postId,
-            title: req.body.title,
-            description: req.body.description,
-            status: req.body.status,
-            userId: req.body.userId,
-            
-        }
-        const post = await Post.create(newpost);
-
+        const { title, description, status, userId, file_path } = req.body;
+        const post = await Post.create({
+            title,
+            description,
+            status,
+            userId,
+            file_path
+        });
         res.status(201).json({
             success: true,
             message: 'Post created successfully',
-            post: post
-        })
-
+            post
+        });
     } catch (error) {
-        
+        console.error(error); 
         res.status(500).json({
             success: false,
             message: 'Internal Server Error'
         });
     }
-}
+};
+
 
 //get all posts
 const getAllPost = async (req, res) => {
@@ -212,10 +209,11 @@ const uploadFiles = async (req, res) => {
       console.log(filePaths);
   
       // Update the Post record with the file paths using Sequelize
-      await Post.update({ file_paths: filePaths.join(',') }, { where: { postId: id } });
-  
+      await Post.update({ file_path: filePaths.join(',') }, { where: { postId: id } });
+      
       res.status(201).json({ message: 'Files uploaded successfully' });
     } catch (error) {
+        console.error(error)
       console.error('Error uploading files:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
@@ -223,4 +221,12 @@ const uploadFiles = async (req, res) => {
   
 
 
-module.exports={addPost,getAllPost,getOnePost,updatePost,getPostWithUser,postSoftDelete,          postHardDelete,uploadFiles}
+module.exports={addPost,
+                getAllPost,
+                getOnePost,
+                updatePost,
+                getPostWithUser,
+                postSoftDelete,
+                postHardDelete,
+                uploadFiles
+            }
