@@ -309,6 +309,36 @@ const changePassword=async(req,res)=>{
         res.status(500).json({ error: 'Internal Server Error' });
       }
 }
+// forgot password
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log(email);
+        const user = User.findOne({ where: { email:email } });
+        if (!user) return res.status(401).json({ error: "User not found." });
+
+        const data = {
+            "email": email,
+        }
+
+        const token = jwt.sign(data, process.env.JWT_SECRET, {
+            expiresIn: 300
+        });
+
+        return res.status(200).json({
+            status: true,
+            message: "Update password token is generated , update your password withing 5 min",
+            token: token
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
+}
 
 module.exports = { addUser, 
     getAllUser, 
@@ -321,5 +351,6 @@ module.exports = { addUser,
     userHardDelete, 
     signup, 
     login,
-    changePassword
+    changePassword,
+    forgotPassword
 }

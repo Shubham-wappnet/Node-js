@@ -15,6 +15,7 @@ router.get('/get/:id', userController.viewUserPostById)
 router.post('/signup',validateRegistration,userController.signup)
 router.post('/login',userController.login)
 router.patch('/newPassword',authenticateJWT,userController.changePassword)
+router.post('/forgotPassword',userController.forgotPassword)
 
 router.patch('/softDelete/:id', userController.userSoftDelete);
 router.delete('/hardDelete/:id', userController.userHardDelete);
