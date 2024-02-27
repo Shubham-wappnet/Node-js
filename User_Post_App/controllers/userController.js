@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt')
 const db = require('../models')
 const User = db.user;
 const Post = db.post;
-const Joi = require('joi')
 
 
 

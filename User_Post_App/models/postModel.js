@@ -23,12 +23,7 @@ module.exports=(sequelize,DataTypes)=>{
             type: DataTypes.ENUM('Active', 'Deleted'),
             defaultValue: 'Active',
             allowNull: false,
-            // validate: {
-            //   isIn: {
-            //     args: [['Active', 'Deleted']],
-            //     msg: "Must be Active or Deleted"
-            //   }
-            // }
+            
           },
           userId: {
             type: DataTypes.INTEGER,
