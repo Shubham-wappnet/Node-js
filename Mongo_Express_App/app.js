@@ -57,7 +57,7 @@ app.use('/api/posts',router2)
 
 
 
-app.get('/',(req, res) => {
+app.get('/',cors(corOption),(req, res) => {
   res.send('Hello, -this is a cors enabled origin');
 });
 
