@@ -26,12 +26,19 @@ mongoose.connect(process.env.MONGO_URL, {
 .then(()=>console.log("connected with db "))
 .catch((err)=>console.log(err));
 
-
-const router1=require('./routes/userRouter.js')
-app.use('/api/users',router1)
-
-const router2=require('./routes/postRouter.js')
-app.use('/api/posts',router2)
+app.use(session(
+  {
+      createdid: (req) => {
+          return uuid(); 
+      },
+      secret: process.env.SECRET_KEY,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+          maxAge: 300000 
+      }
+  }
+));
 
 app.get('/validate',validateRegistration,(req,res)=>{
   res.json({msg:"user validate successfully"})
@@ -41,21 +48,16 @@ app.get('/protectedRoute', sessionAuthentication, (req, res) => {
     res.json({mas:'this route is protected'});
 });
 
-app.use(session(
-  {
-      createdid: (req) => {
-          return uuid(); 
-      },
-      secret: 'your-secret-key',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-          maxAge: 300000 
-      }
-  }
-));
 
-app.get('/',cors(corOption),(req, res) => {
+const router1=require('./routes/userRouter.js')
+app.use('/api/users',router1)
+
+const router2=require('./routes/postRouter.js')
+app.use('/api/posts',router2)
+
+
+
+app.get('/',(req, res) => {
   res.send('Hello, -this is a cors enabled origin');
 });
 

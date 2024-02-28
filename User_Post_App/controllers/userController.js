@@ -7,8 +7,6 @@ const User = db.user;
 const Post = db.post;
 
 
-
-
 const addUser = async (req, res) => {
     try {
         let info = {

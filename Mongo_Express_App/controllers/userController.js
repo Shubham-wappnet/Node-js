@@ -45,39 +45,58 @@ const signup = async (req, res) => {
 };
 
 // login
+// const login = async (req, res) => {
+//     try {
+//         const { email } = req.body;
+
+//         const user = await User.findOne({ email });
+
+//         if (!user) {
+//             return res.status(404).json({ error: "User not found" });
+//         }
+//         const isPasswordValid = await bcrypt.compare(password, user.password);  
+//         if (!isPasswordValid) {
+//             return res.status(401).json({ error: 'Invalid email or password' });
+//         }
+
+//         // store session
+//         req.session.user =user 
+//         // {
+//         //     _id: user._id,
+//         //     email: user.email,
+
+//         // };
+//         res.status(200).json({
+//             //status: true,
+//             //email: email,
+//             message: "User is logged in and session is created.",
+//             //sessionID: sessionID
+//         });
+//         console.log(user)
+//     } catch (error) {
+//         console.error("Error occurred while login:", error);
+//         res.status(500).json({ error: "Internal Server Error" });
+//     }
+// };
+
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-        const isPasswordValid = await bcrypt.compare(password, user.password);  
-        if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Invalid email or password' });
-        }
-
-        // store session
-        req.session.user = {
-            _id: user._id,
-            email: user.email,
-
-        };
+        const email = req.body.email;
+        req.session.email = email;
+        const user = await User.findOne({where:{ email: email }});
+        
+        const sessionID = req.sessionID;
         res.status(200).json({
             status: true,
             email: email,
             message: "User is logged in and session is created.",
             sessionID: sessionID
-        });
-        console.log(user)
+        })
     } catch (error) {
-        console.error("Error occurred while login:", error);
+        console.error("Error occurred while fetching user:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
-};
-
+}
 
 // get all user
 const getAllUser = async (req, res) => {

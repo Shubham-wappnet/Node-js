@@ -3,9 +3,9 @@ const otpSave = new Map();
 
 const generatOtp = async (email) => {
     const otp = otpGenerator.generate(6, { digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, upperCase: false, specialChars: false });
-    const timestamp = Date.now();
+    const time = Date.now();
     const validity = 4 * 60 * 1000; 
-    const expiryTime = timestamp + validity;
+    const expiryTime = time + validity;
     otpSave.set(otp, { email, expiryTime });
     return otp;
 }
