@@ -183,5 +183,21 @@ class Volume extends Cube{
 const V1=new Volume(5);
 console.log(V1.getVolume());
 
+// class decorator
+function logger(constructor:Function){
+    console.log('logging the data')
+    console.log(constructor)
+}
+
+
+class Persons{
+    name="Shubham"
+    constructor(){
+        console.log("creating object")
+    }
+}
+const P1=new Persons();
+console.log(P1);
+
 
 export {}
