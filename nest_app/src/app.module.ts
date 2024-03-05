@@ -26,7 +26,7 @@ const Routes=[{path:"Jobs",module:JobsModule},
   imports:[UsersModule,DataModule,JobsModule,RouterModule.register(Routes)],
   controllers: [UserController],
   providers: [{ provide: UserStore, useClass: UserStore },
-              {provide:APP_INTERCEPTOR,useClass:LoggingInterceptor},
+              {provide:APP_INTERCEPTOR,useClass:LoggingInterceptor},  // global interceptor
   // providers:[{provide:'Store',useClass:UserStore}]
   // providers:[{provide:UserStore,useClass:Store}]
 
@@ -38,4 +38,4 @@ const Routes=[{path:"Jobs",module:JobsModule},
   UserService],
 
 })
-export class AppModule { }
+export class AppModule {}
