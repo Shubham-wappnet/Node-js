@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Module } from "@nestjs/common";
+import { Module, OnModuleInit } from "@nestjs/common";
 import { DataContoller } from "src/Datas/dataController";
 
 
@@ -7,4 +7,8 @@ import { DataContoller } from "src/Datas/dataController";
     imports:[],
     controllers:[DataContoller]
 })
-export class DataModule{}
+export class DataModule implements OnModuleInit{
+    onModuleInit() {
+        console.log("Data module inits")
+    }
+}

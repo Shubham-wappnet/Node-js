@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
+import { ConfigModule} from '@nestjs/config';
 import { UserStore } from './Users/userStore';  // instance of injectable class
 //import { DataContoller } from './dataController';
 import { UserController } from './Users/userController';
@@ -9,6 +10,10 @@ import { DataModule } from './Datas/datas.module';
 import { RouterModule,APP_INTERCEPTOR } from '@nestjs/core';
 import { JobsModule } from './Jobs/jobs.module';
 import { LoggingInterceptor } from './Users/userInterceptor';
+import { AdminModule } from './Admin/admin.module';
+import { DashBoardController } from './Admin/dashboardController';
+import configuration from './config/configuration';
+import { MongooseModule } from '@nestjs/mongoose';
 //import { Store } from 'store/store';            // instance of injectable class
 
 const mockValues = {
@@ -17,18 +22,24 @@ const mockValues = {
 }
 const Routes=[{path:"Jobs",module:JobsModule},
               {path:"Users",module:UsersModule},
-              {path:"Datas",module:DataModule}
+              {path:"Datas",module:DataModule},
+              {path:"DashBoard",module:AdminModule}
             ]
 
 
 @Module({
 
-  imports:[UsersModule,DataModule,JobsModule,RouterModule.register(Routes)],
-  controllers: [UserController],
+  imports:[DataModule,UsersModule,JobsModule,AdminModule,ConfigModule.forRoot({
+                                                         load:configuration,
+                                                         envFilePath:['.env'],
+                                                         cache:true,
+                                                         isGlobal:true}),
+                                                         MongooseModule.forRoot(process.env.MONGO_URL),
+                                                         RouterModule.register(Routes)],
+  controllers: [UserController,DashBoardController],
   providers: [{ provide: UserStore, useClass: UserStore },
               {provide:APP_INTERCEPTOR,useClass:LoggingInterceptor},  // global interceptor
-  // providers:[{provide:'Store',useClass:UserStore}]
-  // providers:[{provide:UserStore,useClass:Store}]
+  
 
   // value provider
   { provide: 'DATABASE_NAME', useValue: 'rkjrkj' },

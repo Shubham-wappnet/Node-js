@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {  Module,Global } from "@nestjs/common";
+import {  Module,Global, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
 import { UserController } from "./userController";
 import { UserService } from "./userService";
 
@@ -10,4 +10,11 @@ import { UserService } from "./userService";
        providers:[UserService],
        exports:[UserService]
 })
-export class UsersModule{}
+export class UsersModule implements OnModuleInit ,OnModuleDestroy{
+       onModuleInit() {
+           console.log("User module inits")
+       }
+       onModuleDestroy() {
+           console.log("User module is terminated")
+       }
+}

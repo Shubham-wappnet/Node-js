@@ -38,6 +38,7 @@ export class UserController{
     @UseInterceptors(LoggingInterceptor)
     @UseGuards(AuthGuard)
     @UsePipes(new ZodValidationPipe(createUserSchema))
+    
     createUser(@Body() createUserData:CreateUserDto){
         this.userService.addUser(createUserData);
         return {MESSAGES:"user is added"}
