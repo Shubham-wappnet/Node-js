@@ -8,7 +8,6 @@ import { UserService } from './Users/userService';
 import { UsersModule } from './Users/users.module';
 import { DataModule } from './Datas/datas.module';
 import { RouterModule,APP_INTERCEPTOR } from '@nestjs/core';
-import { JobsModule } from './Jobs/jobs.module';
 import { LoggingInterceptor } from './Users/userInterceptor';
 import { AdminModule } from './Admin/admin.module';
 import { DashBoardController } from './Admin/dashboardController';
@@ -20,7 +19,7 @@ const mockValues = {
   type: 'dev',
   node: 17
 }
-const Routes=[{path:"Jobs",module:JobsModule},
+const Routes=[
               {path:"Users",module:UsersModule},
               {path:"Datas",module:DataModule},
               {path:"DashBoard",module:AdminModule}
@@ -29,7 +28,7 @@ const Routes=[{path:"Jobs",module:JobsModule},
 
 @Module({
 
-  imports:[DataModule,UsersModule,JobsModule,AdminModule,ConfigModule.forRoot({
+  imports:[DataModule,UsersModule,AdminModule,ConfigModule.forRoot({
                                                          load:configuration,
                                                          envFilePath:['.env'],
                                                          cache:true,
