@@ -1,5 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventProducerService } from './Events/event-produser-service';
+import { EventConsumerService } from './Events/event-listener-service';
 import { ConfigModule} from '@nestjs/config';
 import { UserStore } from './Users/userStore';  // instance of injectable class
 //import { DataContoller } from './dataController';
@@ -13,6 +16,14 @@ import { AdminModule } from './Admin/admin.module';
 import { DashBoardController } from './Admin/dashboardController';
 import configuration from './config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CatsModule } from './Cats/cat.module';
+import { CatsController } from './Cats/cats.controller';
+import { CatsService } from './Cats/cats.service';
+import { CatSchema } from './schemas';
+import { EventEmitterService } from './Events/event-emitter-service';
+import { MyMulterModule } from './Cats/fileUpload/multer.upload';
+
+
 //import { Store } from 'store/store';            // instance of injectable class
 
 const mockValues = {
@@ -22,21 +33,24 @@ const mockValues = {
 const Routes=[
               {path:"Users",module:UsersModule},
               {path:"Datas",module:DataModule},
-              {path:"DashBoard",module:AdminModule}
+              {path:"DashBoard",module:AdminModule},
+              {path:"cats",module:CatsModule}
             ]
 
 
 @Module({
 
-  imports:[DataModule,UsersModule,AdminModule,ConfigModule.forRoot({
+  imports:[DataModule,UsersModule,AdminModule,CatsModule,MyMulterModule,ConfigModule.forRoot({
                                                          load:configuration,
                                                          envFilePath:['.env'],
                                                          cache:true,
                                                          isGlobal:true}),
+                                                         EventEmitterModule.forRoot(),
                                                          MongooseModule.forRoot(process.env.MONGO_URL),
+                                                         MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }]),
                                                          RouterModule.register(Routes)],
-  controllers: [UserController,DashBoardController],
-  providers: [{ provide: UserStore, useClass: UserStore },
+  controllers: [UserController,DashBoardController,CatsController],
+  providers: [EventEmitterService,EventProducerService,EventConsumerService,{ provide: UserStore, useClass: UserStore },
               {provide:APP_INTERCEPTOR,useClass:LoggingInterceptor},  // global interceptor
   
 
@@ -45,7 +59,7 @@ const Routes=[
   { provide: 'Mail', useValue: ['abc@gmail.com', 'xyz@gmail.com'] },
   { provide: 'Object', useValue: mockValues },
 
-  UserService],
+  UserService,CatsService,],
 
 })
 export class AppModule {}

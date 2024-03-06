@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import {  Module,Global, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
+
 import { UserController } from "./userController";
 import { UserService } from "./userService";
 
