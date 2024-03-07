@@ -4,7 +4,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cat } from '../schemas/cat.schema';
 import { CreateCatDto } from './dto/create-cat-dto';
-//import { File } from 'express';
+
+
+
 
 @Injectable()
 export class CatsService {
@@ -31,9 +33,4 @@ async create(createCatDto: CreateCatDto): Promise<Cat> {
     return this.catModel.find().exec();
   }
 
-  async uploadFile(files: File[]): Promise<Cat> {
-    const imageUrl = files[0].fileName;
-    const newCat = new this.catModel({ imageUrl });
-    return newCat.save();
-  }
 }

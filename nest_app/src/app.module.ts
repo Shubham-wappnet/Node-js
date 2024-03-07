@@ -21,10 +21,16 @@ import { CatsController } from './Cats/cats.controller';
 import { CatsService } from './Cats/cats.service';
 import { CatSchema } from './schemas';
 import { EventEmitterService } from './Events/event-emitter-service';
-import { MyMulterModule } from './Cats/fileUpload/multer.upload';
+import { MulterModule } from '@nestjs/platform-express';
+
 
 
 //import { Store } from 'store/store';            // instance of injectable class
+import { AuthModule } from './auth/auth.module';
+import { PersonsModule } from './persons/persons.module';
+import { EncryptionModule } from './encryption/encryption.module';
+import { EncryptionController } from './encryption/encryption.controller';
+import { EncryptionService } from './encryption/encryption.service';
 
 const mockValues = {
   type: 'dev',
@@ -40,7 +46,7 @@ const Routes=[
 
 @Module({
 
-  imports:[DataModule,UsersModule,AdminModule,CatsModule,MyMulterModule,ConfigModule.forRoot({
+  imports:[DataModule,UsersModule,AdminModule,CatsModule,EncryptionModule,MulterModule.register({dest:'./upload'}),ConfigModule.forRoot({
                                                          load:configuration,
                                                          envFilePath:['.env'],
                                                          cache:true,
@@ -48,8 +54,10 @@ const Routes=[
                                                          EventEmitterModule.forRoot(),
                                                          MongooseModule.forRoot(process.env.MONGO_URL),
                                                          MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }]),
-                                                         RouterModule.register(Routes)],
-  controllers: [UserController,DashBoardController,CatsController],
+                                                         RouterModule.register(Routes),
+                                                         AuthModule,
+                                                         PersonsModule],
+  controllers: [UserController,DashBoardController,CatsController,EncryptionController],
   providers: [EventEmitterService,EventProducerService,EventConsumerService,{ provide: UserStore, useClass: UserStore },
               {provide:APP_INTERCEPTOR,useClass:LoggingInterceptor},  // global interceptor
   
@@ -59,7 +67,7 @@ const Routes=[
   { provide: 'Mail', useValue: ['abc@gmail.com', 'xyz@gmail.com'] },
   { provide: 'Object', useValue: mockValues },
 
-  UserService,CatsService,],
+  UserService,CatsService,EncryptionService],
 
 })
 export class AppModule {}

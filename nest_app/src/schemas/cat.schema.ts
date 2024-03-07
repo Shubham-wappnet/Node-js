@@ -17,6 +17,7 @@ export class Cat {
 
   @Prop()
   imageUrl:string;
+
 }
 
 export const CatSchema = SchemaFactory.createForClass(Cat)
