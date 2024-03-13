@@ -15,9 +15,12 @@ const userSchema = Joi.object({
             return helper.message("password must contain one uppercase,one lowercase and one digit")
         }
         return value;
-    })
-
+    }),
+    confirmpassword:Joi.string().valid(Joi.ref('password')).required()
 })
+
+
+
 const validateRegistration = (req, res, next) => {
     const { error } = userSchema.validate(req.body);
     if (error) {

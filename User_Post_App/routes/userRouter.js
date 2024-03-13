@@ -21,3 +21,5 @@ router.patch('/softDelete/:id', userController.userSoftDelete);
 router.delete('/hardDelete/:id', userController.userHardDelete);
 
 module.exports=router
+
+//"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNodWJoYW0xMzJAZ21haWwuY29tIiwiaWF0IjoxNzEwMTM1NDIwLCJleHAiOjE3MTAxNDI2MjB9.v7ntRO_uRQNP2KKd9p_ngMDQjWA2uTYqwhrm1kmKoXw"

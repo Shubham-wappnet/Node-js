@@ -2,11 +2,11 @@ const mongoose=require('mongoose')
 const{Schema}=mongoose
 
 const postSchema= new Schema({
-    // postId: {
-    //     type: Number,
-    //     required: true,
-    //     unique: true
-    // },
+    postId: {
+        type: Number,
+        required: true,
+        unique: true
+    },
     title: {
         type: String,
         required: true
@@ -26,10 +26,8 @@ const postSchema= new Schema({
         ref:'User',
         required: true
     },
-    file_path: {
+    filepath: {
         type: String,
-        
-        
     }
 }, {
     timestamps: true

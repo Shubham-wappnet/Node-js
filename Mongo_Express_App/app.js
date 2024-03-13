@@ -8,6 +8,7 @@ const uuid=require('uuid')
 
 const validateRegistration=require('./middleware/validation.js')
 const sessionAuthentication = require('./middleware/session.js');
+const fileUpload=require('./middleware/multer.js');
 
 const port = process.env.PORT || 3000;
 
@@ -35,19 +36,10 @@ app.use(session(
       resave: false,
       saveUninitialized: false,
       cookie: {
-          maxAge: 300000 
+          maxAge: 900000
       }
   }
 ));
-
-app.get('/validate',validateRegistration,(req,res)=>{
-  res.json({msg:"user validate successfully"})
-})
-
-app.get('/protectedRoute', sessionAuthentication, (req, res) => {
-    res.json({mas:'this route is protected'});
-});
-
 
 const router1=require('./routes/userRouter.js')
 app.use('/api/users',router1)
@@ -55,6 +47,19 @@ app.use('/api/users',router1)
 const router2=require('./routes/postRouter.js')
 app.use('/api/posts',router2)
 
+
+
+app.get('/validate',validateRegistration,(req,res)=>{
+  res.json({msg:"user validate successfully"})
+})
+
+app.get('/fileupload',fileUpload,(req,res)=>{
+  res.json({msg:'file uploaded'})
+})
+
+app.get('/protectedRoute', sessionAuthentication, (req, res) => {
+    res.json({msg:'this route is protected'});
+});
 
 
 app.get('/',cors(corOption),(req, res) => {

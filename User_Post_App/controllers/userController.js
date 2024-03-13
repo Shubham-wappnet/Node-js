@@ -231,24 +231,27 @@ const signup = async (req, res) => {
     try {
         const { email, name, phone, status, password } = req.body;
 
-        // Check if the email already exists
         const existingUser = await User.findOne({ where: { email: email } });
         if (existingUser) {
             return res.status(400).json({ error: 'email is already used' });
         }
+        if(password!==confirmpassword){
+            return res.status(400).json({error:'password and confirm-password must be same'})
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create a new user record
         const newUser = new User({ email, name, phone, status, password: hashedPassword });
         await newUser.save();
 
-        // Generate JWT token
+    
         const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
-            expiresIn: 300
+            expiresIn: "2h"
         });
+        newUser.password=undefined
 
-        res.status(201).json({ token });
-    } catch (error) {
+        res.status(201).json({ newUser,token });
+    } 
+    catch (error) {
         console.error('Error in signup controller:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
@@ -271,16 +274,20 @@ const login = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-            expiresIn: 300
+            expiresIn: "2h"
         });
+        //newUser.password=undefined
 
-        res.json({ token });
-    } catch (error) {
+        res.status(201).json({message:"user is logged in" });
+    } 
+    catch (error) {
         console.error('Error in login controller:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 
+
+// change Password
 const changePassword=async(req,res)=>{
       try{
           const {email,password,newPassword}=req.body;

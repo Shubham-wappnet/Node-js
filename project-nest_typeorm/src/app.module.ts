@@ -23,9 +23,13 @@ import { PhotoService } from './photos/photo.service';
     password: '',
     database: 'test',
     entities: [User,Photo],
+    migrations:["src/migration/*.ts"],
+    migrationsTableName:"custome_migration_table",
+  
     synchronize: true,
     autoLoadEntities:true,
-  }),UserModule,PhotoModule],
+  }),
+  UserModule,PhotoModule],
   controllers: [AppController,UserController,PhotoContoller],
   providers: [AppService,UserService,PhotoService],
 })

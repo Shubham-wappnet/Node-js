@@ -9,20 +9,19 @@ const port = process.env.PORT || 3000;
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+app.get('/validate',validateRegistration,(req,res)=>{
+  res.json({msg:"user validate successfully"})
+})
+
+app.get('/protected',authenticateJWT,(req,res)=>{
+  res.json({msg:'protected route',email:req.email})
+});
 
 const router1=require('./routes/userRouter.js')
 app.use('/api/users',router1)
 
 const router2=require('./routes/postRouter.js')
 app.use('/api/posts',router2)
-
-app.get('/protected',authenticateJWT,(req,res)=>{
-  res.json({msg:'protected route',email:req.email})
-});
-
-app.get('/validate',validateRegistration,(req,res)=>{
-    res.json({msg:"user validate successfully"})
-})
 
 // app.post('/upload',upload.array('files',10),(req,res)=>{
 //   res.send("files uploaded ")

@@ -44,47 +44,15 @@ const signup = async (req, res) => {
     }
 };
 
-// login
-// const login = async (req, res) => {
-//     try {
-//         const { email } = req.body;
-
-//         const user = await User.findOne({ email });
-
-//         if (!user) {
-//             return res.status(404).json({ error: "User not found" });
-//         }
-//         const isPasswordValid = await bcrypt.compare(password, user.password);  
-//         if (!isPasswordValid) {
-//             return res.status(401).json({ error: 'Invalid email or password' });
-//         }
-
-//         // store session
-//         req.session.user =user 
-//         // {
-//         //     _id: user._id,
-//         //     email: user.email,
-
-//         // };
-//         res.status(200).json({
-//             //status: true,
-//             //email: email,
-//             message: "User is logged in and session is created.",
-//             //sessionID: sessionID
-//         });
-//         console.log(user)
-//     } catch (error) {
-//         console.error("Error occurred while login:", error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// };
 
 const login = async (req, res) => {
     try {
         const email = req.body.email;
         req.session.email = email;
         const user = await User.findOne({where:{ email: email }});
-        
+        if(!user){
+            res.status(404).json({message:"user is not register"})
+        }
         const sessionID = req.sessionID;
         res.status(200).json({
             status: true,
@@ -117,6 +85,26 @@ const getAllUser = async (req, res) => {
     }
 }
 
+// get user by email
+const getUserByemail = async (req, res) => {
+    try {
+
+        const email = req.session.email;
+        const user = await User.findOne({ email: email }).select("-_id email name phone status");
+
+        if (user) {
+            res.status(200).send(user);
+        }
+        else {
+            res.status(404).json({ error: "User not found" });
+        }
+    }
+    catch (error) {
+        console.error("Error occurred while fetching user:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
 //update user
 const updateUser = async (req, res) => {
     try {
@@ -140,25 +128,6 @@ const updateUser = async (req, res) => {
 
 }
 
-// get user by email
-const getUserByemail = async (req, res) => {
-    try {
-
-        const email = req.session.email;
-        const user = await User.findOne({ email: email }).select("-_id email name phone status");
-
-        if (user) {
-            res.status(200).send(user);
-        }
-        else {
-            res.status(404).json({ error: "User not found" });
-        }
-    }
-    catch (error) {
-        console.error("Error occurred while fetching user:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-}
 
 // otp generate
 const sendOtp = async (req, res) => {

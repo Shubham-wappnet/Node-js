@@ -6,9 +6,11 @@ const sessionAuthentication = async (req, res, next) => {
     if (sessionId && email) {
         req.user.email = email;
         next();
+        
     }
+   
     else {
-        res.status(401).json({ error: "Unautorized or seeion is expired." })
+        res.status(401).json({ error: "Unautorized or session is expired." })
     }
 }
 
