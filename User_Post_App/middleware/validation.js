@@ -16,7 +16,7 @@ const userSchema = Joi.object({
         }
         return value;
     }),
-    confirmpassword:Joi.string().valid(Joi.ref('password')).required()
+   // confirmpassword:Joi.string().valid(Joi.ref('password')).required()
 })
 
 

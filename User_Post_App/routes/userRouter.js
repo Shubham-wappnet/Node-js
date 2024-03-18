@@ -14,7 +14,7 @@ router.get('/get/:id', userController.viewUserPostById)
 
 router.post('/signup',validateRegistration,userController.signup)
 router.post('/login',userController.login)
-router.patch('/newPassword',authenticateJWT,userController.changePassword)
+router.patch('/newPassword',userController.changePassword)
 router.post('/forgotPassword',userController.forgotPassword)
 
 router.patch('/softDelete/:id', userController.userSoftDelete);
@@ -22,4 +22,3 @@ router.delete('/hardDelete/:id', userController.userHardDelete);
 
 module.exports=router
 
-//"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNodWJoYW0xMzJAZ21haWwuY29tIiwiaWF0IjoxNzEwMTM1NDIwLCJleHAiOjE3MTAxNDI2MjB9.v7ntRO_uRQNP2KKd9p_ngMDQjWA2uTYqwhrm1kmKoXw"

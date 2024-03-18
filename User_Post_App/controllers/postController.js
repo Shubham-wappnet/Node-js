@@ -5,18 +5,13 @@ const User=db.user
 // addPost
 const addPost = async (req, res) => {
     try {
-        const { title, description, status, userId, file_path } = req.body;
-        const post = await Post.create({
-            title,
-            description,
-            status,
-            userId,
-            file_path
-        });
+        const { title, description, status, userId } = req.body;
+        const newPost=new Post({title,description,status,userId});
+        await newPost.save();
         res.status(201).json({
             success: true,
             message: 'Post created successfully',
-            post
+            newPost
         });
     } catch (error) {
         console.error(error); 
@@ -36,8 +31,7 @@ const getAllPost = async (req, res) => {
 
         const offset = (page - 1) * pageSize;
 
-        
-        const posts = await Post.findAll({ offset: offset, limit: 2, order: [['updatedAt', 'DESC']] });
+        const posts = await Post.findAll({ offset: offset, limit: 2, order: [['updatedAt','DESC']] });
         if (posts && posts.length>0) {
             res.status(200).send(posts);
         }
@@ -183,23 +177,6 @@ const postHardDelete = async (req, res) => {
 
 
 // apload files
-
-// const uploadFiles = async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const { files } = req;
-//     const filePaths = files.map(file => file.path); // Get file paths
-//     console.log(filePaths)
-//     // Update the Post record with the file paths using Sequelize
-//     await Post.update({ file_paths: filePaths }, { where: { postId: id } });
-
-//     res.status(201).json({ message: 'Files uploaded successfully' });
-//   } catch (error) {
-//     console.error('Error uploading files:', error);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// };
-
 const uploadFiles = async (req, res) => {
     try {
       const id = req.params.id;

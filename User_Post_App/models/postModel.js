@@ -36,7 +36,7 @@ module.exports=(sequelize,DataTypes)=>{
           },
           file_path:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
           }
         }, 
         {

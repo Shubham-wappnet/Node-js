@@ -3,6 +3,8 @@ require('dotenv').config
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const db = require('../models')
+const nodemailer=require('nodemailer')
+//const sendEmail=require('../services/sendEmail')
 const User = db.user;
 const Post = db.post;
 
@@ -150,13 +152,11 @@ const viewUserPostById = async (req, res) => {
         }
 
         const data = await User.findOne({
-            attributes: ['id', 'name', 'email', 'phone'],
+            attributes: ['name','email'],
             include: [{
                 model: Post,
                 as: 'postDetails',
-                attributes: ['postId', 'title', 'description', 'status']
-            }
-            ],
+                attributes: ['postId', 'title', 'description', 'status']}],
             where: { id: id, status: "Active" }
         })
         if (data) {
@@ -183,7 +183,8 @@ const userSoftDelete = async (req, res) => {
         if (softDeleteUser > 0) {
 
             const softDeletePost = await Post.update({ status: "Deleted" }, { where: { userId: id, status: "Active" } });
-            console.log(softDeleteUser);
+            console.log(softDeleteUser)
+            console.log(softDeletePost)
             res.status(200).json({
                 success: true,
                 message: 'User and associated posts soft deleted successfully',
@@ -225,8 +226,8 @@ const userHardDelete = async (req, res) => {
     }
 }
 
-// signup
 
+// signup
 const signup = async (req, res) => {
     try {
         const { email, name, phone, status, password } = req.body;
@@ -235,21 +236,17 @@ const signup = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: 'email is already used' });
         }
-        if(password!==confirmpassword){
-            return res.status(400).json({error:'password and confirm-password must be same'})
-        }
+        
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({ email, name, phone, status, password: hashedPassword });
         await newUser.save();
 
-    
         const token = jwt.sign({ email: newUser.email }, process.env.JWT_SECRET, {
             expiresIn: "2h"
         });
         newUser.password=undefined
-
-        res.status(201).json({ newUser,token });
+        res.status(201).json({ token });
     } 
     catch (error) {
         console.error('Error in signup controller:', error);
@@ -272,11 +269,9 @@ const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        // Generate JWT token
         const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
             expiresIn: "2h"
         });
-        //newUser.password=undefined
 
         res.status(201).json({message:"user is logged in" });
     } 
@@ -304,8 +299,7 @@ const changePassword=async(req,res)=>{
 
           // change password after user is autherised
           const hashedPassword=await bcrypt.hash(newPassword,10) 
-          user.password=hashedPassword
-          await user.save();
+          await user.update({password:hashedPassword})
           res.status(200).json({message:"password changed successfully" });
     }
       catch(error){
@@ -317,30 +311,40 @@ const changePassword=async(req,res)=>{
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log(email);
         const user = User.findOne({ where: { email:email } });
-        if (!user) return res.status(401).json({ error: "User not found." });
-
-        const data = {
-            "email": email,
+        if (!user){ 
+            return res.status(401).json({ error: "User not found." });
         }
 
-        const token = jwt.sign(data, process.env.JWT_SECRET, {
+        const resetToken = jwt.sign({email:user.email}, process.env.JWT_SECRET, {
             expiresIn: 300
         });
-
-        return res.status(200).json({
-            status: true,
-            message: "Update password token is generated , update your password withing 5 min",
-            token: token
-        });
-
-    } catch (error) {
+        
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'ladshubham1326@gmail.com'
+            }
+          });
+          const mailOptions = {
+            from: 'ladshubham1326@gmail.com',
+            to: email,
+            subject: 'resetToken',
+            text: `Your token is: ${resetToken}`
+          };
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+              console.log(err);
+              res.status(500).send('Error sending email');
+            } else {
+              console.log('Email sent successfully');
+              res.status(200).send('Token sent successfully');
+            }
+          });
+    } 
+    catch (error) {
         console.error(error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal Server Error'
-        });
+        res.status(500).json({message: 'Internal Server Error'});
     }
 }
 
