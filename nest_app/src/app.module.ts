@@ -31,6 +31,8 @@ import { PersonsModule } from './persons/persons.module';
 import { EncryptionModule } from './encryption/encryption.module';
 import { EncryptionController } from './encryption/encryption.controller';
 import { EncryptionService } from './encryption/encryption.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskScheduler } from './task-scheduler/task.scheduler';
 
 const mockValues = {
   type: 'dev',
@@ -55,11 +57,13 @@ const Routes=[
                                                          MongooseModule.forRoot(process.env.MONGO_URL),
                                                          MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }]),
                                                          RouterModule.register(Routes),
+                                                         ScheduleModule.forRoot(),
                                                          AuthModule,
                                                          PersonsModule],
   controllers: [UserController,DashBoardController,CatsController,EncryptionController],
   providers: [EventEmitterService,EventProducerService,EventConsumerService,{ provide: UserStore, useClass: UserStore },
               {provide:APP_INTERCEPTOR,useClass:LoggingInterceptor},  // global interceptor
+              TaskScheduler,
   
 
   // value provider

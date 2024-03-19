@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, UsePipes, UseInterceptors,UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, UsePipes, UseInterceptors,UploadedFiles, ClassSerializerInterceptor } from '@nestjs/common';
 import { ZodValidationPipe } from './catValidation';
 
 import { CatsService } from './cats.service';
@@ -55,10 +55,9 @@ export class CatsController {
     }
   }
   
-
+  //@UseInterceptors(ClassSerializerInterceptor)
   @Get()
    findAllCats(): Promise<Cat[]> {
-  
    return this.catsService.findAll();
   }
 }

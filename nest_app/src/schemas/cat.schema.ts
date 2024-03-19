@@ -17,7 +17,17 @@ export class Cat {
 
   @Prop()
   imageUrl:string;
+  
+  
+  @Prop()
+  password:string;
 
 }
-
 export const CatSchema = SchemaFactory.createForClass(Cat)
+
+CatSchema.set('toJSON', {
+  transform: (doc, res) => {
+    delete res.password;
+    return res;
+  }
+});

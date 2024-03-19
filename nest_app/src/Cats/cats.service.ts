@@ -12,18 +12,16 @@ import { CreateCatDto } from './dto/create-cat-dto';
 export class CatsService {
   constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
 
-//    create(createCatDto: CreateCatDto): Promise<Cat> {
-//     const createdCat = new this.catModel(createCatDto);
-//     return createdCat.save();
-//   }
 async create(createCatDto: CreateCatDto): Promise<Cat> {
-    const { name, age, breed, imageUrl } = createCatDto;
+    const { name, age, breed, imageUrl,password } = createCatDto;
 
     const newCat = new this.catModel({
       name,
       age,
       breed,
-      imageUrl 
+      imageUrl,
+      password
+      
     });
 
     return await newCat.save();
